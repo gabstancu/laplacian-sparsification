@@ -1,0 +1,7 @@
+#ifndef GRAPH_GENERATOR_HPP
+#define GRAPH_GENERATOR_HPP
+
+
+
+
+#endif // GRAPH_GENERATOR_HPP

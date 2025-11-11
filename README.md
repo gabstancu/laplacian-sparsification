@@ -1,1 +1,1 @@
-# laplacian-sparsification
+# Laplacian Sparsification
