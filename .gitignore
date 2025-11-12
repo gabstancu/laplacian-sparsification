@@ -41,3 +41,4 @@
 *.dwo
 venv/
 *.dat
+build/
