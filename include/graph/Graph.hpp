@@ -41,9 +41,9 @@ class Graph
         int  m         () { return this->m_; }
         bool connected () { return this->connected_; }
 
-        void add_edge           (Edge edge) { this->edges_.push_back(edge); this->m_++;}
-        void build_from_edges   ();
-        std::vector<Edge> edges ()          { return this->edges_; }
+        void              add_edge           (Edge edge) { this->edges_.push_back(edge); this->m_++;}
+        void              build_from_edges   ();
+        std::vector<Edge> edges              ()          { return this->edges_; }
 
         SparseMatrix build_adjacency        ();
         SparseMatrix build_degree           ();
@@ -80,7 +80,7 @@ class Graph
 
         void buildCSR             ();
         bool check_connectivity   ();
-        void canonicaliseAndMerge (std::vector<InputEdge>& in);
+        void canonicaliseAndMerge (std::vector<InputEdge>& in, std::vector<Edge>& out);
 
         Graph (int n, std::vector<Edge>&& edges, 
                       std::vector<int>&&  row_prt,

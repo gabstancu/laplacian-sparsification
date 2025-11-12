@@ -11,7 +11,7 @@ int main ()
     Graph::Edge edge_5{0, 3, 1.0, 4};
 
     Graph graph;
-    graph.set_n(3);
+    graph.set_n(4);
     graph.add_edge(edge_1);
     graph.add_edge(edge_2);
     graph.add_edge(edge_3);
