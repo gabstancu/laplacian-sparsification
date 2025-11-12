@@ -53,7 +53,8 @@ void Graph::build_from_edges ()
     }
 
     /* build CSR representation */
-    
+    std::vector<int>    row_ptr, col_idx;
+    std::vector<double> adj_w;
 
 
     this->built_ = true;
