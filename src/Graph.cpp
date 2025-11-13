@@ -1,5 +1,6 @@
 #include "graph/Graph.hpp"
 #include <iostream>
+#include "utils/display.hpp"
 
 Graph::Graph(int n,
              std::vector<Edge>&& edges,
@@ -32,12 +33,16 @@ void Graph::build_from_edges ()
     std::vector<InputEdge> in;
     in.reserve(edges_.size());
     for (const auto& e : edges_)
+    {
         in.push_back({e.u, e.v, e.w});
+    }
     
     std::vector<Edge> canon;
     canonicaliseAndMerge(in, canon);
     if (canon.empty())
+    {
         throw std::runtime_error("build_from_edges: canonical edge list is empty.");
+    }
     
     
     std::vector<double> degree(n_, 0.0);
@@ -52,17 +57,17 @@ void Graph::build_from_edges ()
     std::vector<double> adj_w;
     buildCSR(canon, row_ptr, col_idx, adj_w);
 
-    bool conn = check_connectivity();
-
-
     this->built_     = true;
     this->edges_     = std::move(canon);
     this->row_ptr_   = std::move(row_ptr);
     this->col_idx_   = std::move(col_idx);
     this->adj_w_     = std::move(adj_w);
     this->degree_    = std::move(degree);
+
+    bool conn = check_connectivity();
     this->connected_ = conn;
 }
+
 
 
 void Graph::buildCSR (std::vector<Edge>& edges, 
@@ -118,7 +123,9 @@ void Graph::buildCSR (std::vector<Edge>& edges,
     assert(static_cast<size_t>(row_ptr.back()) == 2 * edges.size());
 
     for (int u = 0; u < n_; ++u) 
+    {
         assert(row_ptr[u] <= row_ptr[u + 1]);
+    }
 
 }
 
@@ -126,10 +133,11 @@ void Graph::buildCSR (std::vector<Edge>& edges,
 
 bool Graph::check_connectivity ()
 {   
-    if (!n_)
+    if (n_ == 0)
     {
         return true;
     }
+
     std::vector<int> vis(n_, 0);
     std::queue<int>  q; 
 
@@ -156,6 +164,7 @@ bool Graph::check_connectivity ()
 
     return visited == n_;
 }
+
 
 
 void Graph::canonicaliseAndMerge (std::vector<InputEdge>& in, std::vector<Edge>& out)
@@ -198,4 +207,90 @@ void Graph::canonicaliseAndMerge (std::vector<InputEdge>& in, std::vector<Edge>&
         out.push_back({u, v, wsum, static_cast<int>(out.size())});
         i = j;
     }
+}
+
+
+
+SparseMatrix Graph::build_adjacency ()
+{
+    SparseMatrix A(n_, n_);
+    std::vector<Triplet> EDGES;
+    // EDGES.reserve(2 * m_);
+
+    for (Edge e : edges_)
+    {
+        EDGES.emplace_back(e.u, e.v, e.w);
+        EDGES.emplace_back(e.v, e.u, e.w);
+    }
+
+    A.setFromTriplets(EDGES.begin(), EDGES.end());
+    A.makeCompressed();
+
+    return A;
+}
+
+
+SparseMatrix Graph::buildLaplacianUnpinned ()
+{
+    SparseMatrix L(n_, n_);
+    std::vector<Triplet> Entries;
+
+    for (int i = 0; i < n_; i++) /* insert diagonal elements */
+    {
+        Entries.emplace_back(i, i, degree_[i]);
+    }
+
+    for (const auto& edge : edges_) /* insert off-diagonal elements */
+    {
+        Entries.emplace_back(edge.u, edge.v, -edge.w);
+        Entries.emplace_back(edge.v, edge.u, -edge.w);
+    }
+
+    L.setFromTriplets(Entries.begin(), Entries.end());
+    L.makeCompressed();
+
+    return L;
+}
+
+
+SparseMatrix Graph::buildLaplacianPinned (int pinned_node, PinMaps* maps)
+{
+    SparseMatrix Lp(n_ - 1, n_ - 1);
+    std::vector<Triplet> Entries;
+    
+    maps->pin.assign(n_, -1);
+    
+    for (int u = 0; u < n_; u++)
+    {
+        if (u == pinned_node)
+            continue;
+
+        maps->pin[u] = (u > pinned_node) ? maps->pin[u] = u - 1 : maps->pin[u] = u;
+        maps->unpin.push_back(u);
+    }
+
+    // printVector(maps->pin, true);
+    // printVector(maps->unpin, true);   
+
+    for (int i = 0;  i < n_; i++) /* diagonal elements: keep their degree */
+    {
+        if (i == pinned_node)
+            continue;
+
+        Entries.emplace_back(maps->pin[i], maps->pin[i], degree_[i]);
+    }
+
+    for (const auto& edge: edges_)
+    {
+        if (edge.u == pinned_node || edge.v == pinned_node)
+            continue;
+
+        Entries.emplace_back(maps->pin[edge.u], maps->pin[edge.v], -edge.w);
+        Entries.emplace_back(maps->pin[edge.v], maps->pin[edge.u], -edge.w);
+    }
+
+    Lp.setFromTriplets(Entries.begin(), Entries.end());
+    Lp.makeCompressed();
+
+    return Lp;
 }

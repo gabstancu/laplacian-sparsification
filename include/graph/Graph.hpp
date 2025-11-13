@@ -28,11 +28,10 @@ class Graph
 
         struct PinMaps
         {
-            std::vector<int> pin;
-            std::vector<int> unpin;
+            std::vector<int> pin;   /* -1 if node v is pinned */
+            std::vector<int> unpin; /* remove element v-1 */
         };
         
-        static Graph FromEdges(int n, const std::vector<InputEdge>& in_edges);
         Graph () = default;
 
         void print ();
@@ -46,17 +45,12 @@ class Graph
         std::vector<Edge> edges              ()          { return this->edges_; }
 
         SparseMatrix build_adjacency        ();
-        SparseMatrix build_degree           ();
         SparseMatrix buildLaplacianUnpinned ();
-        SparseMatrix buildLaplacianPinned   ();
+        SparseMatrix buildLaplacianPinned   (int pinned_node, PinMaps* maps);
 
-
-        std::vector<int>&    row_prt () { return this->row_ptr_; }
+        std::vector<int>&    row_ptr () { return this->row_ptr_; }
         std::vector<int>&    col_idx () { return this->col_idx_; }
         std::vector<double>& adj_w   () { return this->adj_w_; }
-
-        std::pair<int*, int*>       neighborIndexRange  (int u) const;
-        std::pair<double*, double*> neighbotWeightRange (int u) const;
 
         void set_n (int n) { this->n_ = n; }
         void set_m (int m) { this->m_ = m; }

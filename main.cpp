@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Eigen/Eigen"
 #include "graph/Graph.hpp"
+#include "utils/display.hpp"
 
 int main ()
 {   
@@ -18,6 +19,10 @@ int main ()
     graph.add_edge(edge_4);
     graph.add_edge(edge_5);
     graph.build_from_edges();
+
+    // Graph::PinMaps maps;
+    // std::cout << graph.buildLaplacianPinned(0, &maps) << '\n';
+
 
     return 0;
 }
