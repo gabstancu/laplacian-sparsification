@@ -29,11 +29,6 @@ void Graph::build_from_edges ()
         throw std::invalid_argument("Graph::build_from_edges: n must be positive");
     }
 
-    for (Edge edge : this->edges_)
-    {
-        printf("edge %d | u: %d v: %d w: %f\n", edge.id, edge.u, edge.v, edge.w);
-    }
-
     std::vector<InputEdge> in;
     in.reserve(edges_.size());
     for (const auto& e : edges_)
@@ -55,15 +50,117 @@ void Graph::build_from_edges ()
     /* build CSR representation */
     std::vector<int>    row_ptr, col_idx;
     std::vector<double> adj_w;
+    buildCSR(canon, row_ptr, col_idx, adj_w);
+
+    bool conn = check_connectivity();
 
 
-    this->built_ = true;
+    this->built_     = true;
+    this->edges_     = std::move(canon);
+    this->row_ptr_   = std::move(row_ptr);
+    this->col_idx_   = std::move(col_idx);
+    this->adj_w_     = std::move(adj_w);
+    this->degree_    = std::move(degree);
+    this->connected_ = conn;
+}
+
+
+void Graph::buildCSR (std::vector<Edge>& edges, 
+                      std::vector<int>& row_ptr, 
+                      std::vector<int>& col_idx, 
+                      std::vector<double>& adj_w)
+{
+    row_ptr.assign(n_+1, 0); /* cumulative offsets */
+
+    for (const auto& e: edges) /* first using it to count neighbors */
+    {
+        std::cout << "edge " << e.id << " e.u: " << e.u << " e.v: " << e.v << " weight: " << e.w << '\n';
+        row_ptr[e.u + 1] += 1;
+        row_ptr[e.v + 1] += 1;
+    }
+
+    // for (int a : row_ptr)
+    // {
+    //     std::cout << a << " ";
+    // }
+    // std::cout << '\n';
+
+    for (int i = 0; i < n_; i++)
+    {
+        row_ptr[i + 1] += row_ptr[i];
+    }
+
+    // for (int a : row_ptr)
+    // {
+    //     std::cout << a << " ";
+    // }
+    // std::cout << '\n';
+
+    col_idx.resize(row_ptr.back());
+    adj_w.resize(row_ptr.back());
+
+    std::vector<int> cursor = row_ptr;
+
+    for (const auto& e : edges)
+    {
+        int pos_u      = cursor[e.u];  // reserve next slot in row u
+        col_idx[pos_u] = e.v;
+        adj_w[pos_u]   = e.w;
+        cursor[e.u]++;
+
+        int pos_v      = cursor[e.v];  // symmetric entry in row v
+        col_idx[pos_v] = e.u;
+        adj_w[pos_v]   = e.w;
+        cursor[e.v]++;
+    }
+
+
+    assert(static_cast<size_t>(row_ptr.back()) == 2 * edges.size());
+
+    for (int u = 0; u < n_; ++u) 
+        assert(row_ptr[u] <= row_ptr[u + 1]);
+
+}
+
+
+
+bool Graph::check_connectivity ()
+{   
+    if (!n_)
+    {
+        return true;
+    }
+    std::vector<int> vis(n_, 0);
+    std::queue<int>  q; 
+
+    vis[0] = 1;
+    q.push(0);
+    int visited = 1;
+
+    while (!q.empty())
+    {
+        /* for every node in q mark all it's neighbors as visited */
+        int u = q.front(); 
+        q.pop();
+        for (int k = row_ptr_[u]; k < row_ptr_[u+1]; k++)
+        {
+            int v = col_idx_[k];
+            if (!vis[v])
+            {
+                vis[v] = 1;
+                visited++;
+                q.push(v);
+            }
+        }        
+    }
+
+    return visited == n_;
 }
 
 
 void Graph::canonicaliseAndMerge (std::vector<InputEdge>& in, std::vector<Edge>& out)
 {   
-    std::cout << "in cononicaliseAndMerge\n";
+    // std::cout << "in cononicaliseAndMerge\n";
     for (auto& e : in)
     {
         if (e.u < 0 || e.u >= n_ || e.v < 0 || e.v >= n_)

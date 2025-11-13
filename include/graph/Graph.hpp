@@ -78,12 +78,15 @@ class Graph
         bool connected_ = false;
         int  built_     = false;
 
-        void buildCSR             ();
+        void buildCSR             (std::vector<Edge>& edges, 
+                                   std::vector<int>& row_prt, 
+                                   std::vector<int>& col_idx, 
+                                   std::vector<double>& adj_w);
         bool check_connectivity   ();
         void canonicaliseAndMerge (std::vector<InputEdge>& in, std::vector<Edge>& out);
 
         Graph (int n, std::vector<Edge>&& edges, 
-                      std::vector<int>&&  row_prt,
+                      std::vector<int>&&  row_ptr,
                       std::vector<int>&&  col_idx,
                       std::vector<double>&& adj_w,
                       std::vector<double>&& degree,
