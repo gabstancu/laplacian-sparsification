@@ -79,7 +79,7 @@ void Graph::buildCSR (std::vector<Edge>& edges,
 
     for (const auto& e: edges) /* first using it to count neighbors */
     {
-        std::cout << "edge " << e.id << " e.u: " << e.u << " e.v: " << e.v << " weight: " << e.w << '\n';
+        // std::cout << "edge " << e.id << " e.u: " << e.u << " e.v: " << e.v << " weight: " << e.w << '\n';
         row_ptr[e.u + 1] += 1;
         row_ptr[e.v + 1] += 1;
     }
@@ -210,6 +210,16 @@ void Graph::canonicaliseAndMerge (std::vector<InputEdge>& in, std::vector<Edge>&
 }
 
 
+void Graph::print ()
+{
+    /* edges */
+
+    /* nodes */
+
+    /* general info */
+}
+
+
 
 SparseMatrix Graph::build_adjacency ()
 {
@@ -228,6 +238,7 @@ SparseMatrix Graph::build_adjacency ()
 
     return A;
 }
+
 
 
 SparseMatrix Graph::buildLaplacianUnpinned ()
@@ -251,6 +262,7 @@ SparseMatrix Graph::buildLaplacianUnpinned ()
 
     return L;
 }
+
 
 
 SparseMatrix Graph::buildLaplacianPinned (int pinned_node, PinMaps* maps)

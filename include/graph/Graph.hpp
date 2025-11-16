@@ -36,9 +36,10 @@ class Graph
 
         void print ();
 
-        int  n         () { return this->n_; }
-        int  m         () { return this->m_; }
-        bool connected () { return this->connected_; }
+        int  n           () { return this->n_; }
+        int  m           () { return this->m_; }
+        bool connected   () { return this->connected_; }
+        std::string type () { return this->type_; }
 
         void              add_edge           (Edge edge) { this->edges_.push_back(edge); this->m_++;}
         void              build_from_edges   ();
@@ -51,6 +52,7 @@ class Graph
         std::vector<int>&    row_ptr () { return this->row_ptr_; }
         std::vector<int>&    col_idx () { return this->col_idx_; }
         std::vector<double>& adj_w   () { return this->adj_w_; }
+        std::vector<double>& degree  () { return this->degree_; }
 
         void set_n (int n) { this->n_ = n; }
         void set_m (int m) { this->m_ = m; }
@@ -58,6 +60,8 @@ class Graph
     private:
         int n_ = 0; // nodes
         int m_ = 0; // edges
+
+        std::string type_ = "";
 
         std::vector<int>    row_ptr_;
         std::vector<int>    col_idx_;
