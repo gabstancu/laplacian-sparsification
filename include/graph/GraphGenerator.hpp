@@ -30,9 +30,9 @@ class GraphGenerator
         Graph grid  (int grid_size);
         Graph torus (int grid_size);
         /* Random */
-        Graph random_d_regular ();
-        Graph erdos_renyi_gnp  ();
-        Graph erdos_renyi_gnm  ();
+        Graph random_d_regular (int n, int    d, bool ensure_connected);
+        Graph erdos_renyi_gnp  (int n, double p, bool ensure_connected);
+        Graph erdos_renyi_gnm  (int n, int    m, bool ensure_connected);
 
         void set_seed    (uint64_t s) { this->seed_ = s; };
         void set_weights (Weights w)  { this->w_    = w; }

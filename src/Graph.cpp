@@ -27,7 +27,7 @@ void Graph::build_from_edges ()
 
     if (n_ <= 0)
     {
-        throw std::invalid_argument("Graph::build_from_edges: n must be positive");
+        throw std::invalid_argument("Graph::build_from_edges: n must be positive. Set n before building.");
     }
 
     std::vector<InputEdge> in;
