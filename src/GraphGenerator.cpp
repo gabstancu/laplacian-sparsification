@@ -324,7 +324,6 @@ Graph GraphGenerator::random_d_regular (int n, int d, bool ensure_connected)
         graph.build_from_edges();
 
         auto& row_ptr = graph.row_ptr();
-        auto& degree  = graph.degree(); 
         bool ok = true;
 
         for (int i = 0; i < n; i++)
