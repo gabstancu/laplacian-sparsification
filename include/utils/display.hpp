@@ -12,10 +12,13 @@
 
 template <typename PQ>
 void print_heap(PQ pq) {   // pass by value → we work on a copy
-    while (!pq.empty()) {
+    while (!pq.empty()) 
+    {
         auto [id, s] = pq.top();
         std::cout << "(" << id << ", { ";
-        for (auto v : s) {
+
+        for (auto v : s) 
+        {
             std::cout << v << " ";
         }
         std::cout << "})\n";
@@ -96,10 +99,13 @@ void print_hashmap(const std::unordered_map<K, V>& m)
 // }
 
 template <typename Map>
-void print_map_of_sets(const Map& m) {
-    for (const auto& [key, values] : m) {
+void print_map_of_sets(const Map& m) 
+{
+    for (const auto& [key, values] : m) 
+    {
         std::cout << key << " : { ";
-        for (const auto& v : values) {
+        for (const auto& v : values)
+        {
             std::cout << v << " ";
         }
         std::cout << "}\n";
