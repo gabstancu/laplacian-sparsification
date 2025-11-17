@@ -19,6 +19,13 @@ class Graph
             int    id;
         };
 
+        struct Vertex
+        {
+            int    u;
+            double value;
+            std::unordered_map<int, double> neighbors; // v -> w
+        };
+
         struct InputEdge /* appending */
         {
             int    u;
@@ -41,9 +48,12 @@ class Graph
         bool connected   () { return this->connected_; }
         std::string type () { return this->type_; }
 
-        void              add_edge           (Edge edge) { this->edges_.push_back(edge); this->m_++;}
-        void              build_from_edges   ();
-        std::vector<Edge> edges              ()          { return this->edges_; }
+        void              add_edge            (Edge edge)     { this->edges_.push_back(edge);      this->m_++;}
+        void              add_vertex          (Vertex vertex) { this->vertices_.push_back(vertex); this->n_++;}   
+        void              build_from_edges    ();
+        void              build_from_vertices ();
+        std::vector<Edge> edges               ()          { return this->edges_; }
+        std::vector<Vertex> vertices          ()          { return this->vertices_; }
 
         SparseMatrix build_adjacency        ();
         SparseMatrix buildLaplacianUnpinned ();
@@ -68,7 +78,8 @@ class Graph
         std::vector<double> adj_w_;
         std::vector<double> degree_; // cached
 
-        std::vector<Edge> edges_;
+        std::vector<Edge>   edges_;
+        std::vector<Vertex> vertices_;
 
         SparseMatrix A; // adjacency matrix
         SparseMatrix D; // degree    matrix

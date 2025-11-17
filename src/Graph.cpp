@@ -22,8 +22,11 @@ Graph::Graph(int n,
 
 void Graph::build_from_edges ()
 {   
-    if (built_)         throw std::runtime_error("build_from_edges: already built");
-    if (edges_.empty()) throw std::runtime_error("build_from_edges: no edges appended");
+    if (built_)         
+        throw std::runtime_error("build_from_edges: already built");
+
+    if (edges_.empty()) 
+        throw std::runtime_error("build_from_edges: no edges appended");
 
     if (n_ <= 0)
     {
@@ -45,6 +48,57 @@ void Graph::build_from_edges ()
     }
     
     
+    std::vector<double> degree(n_, 0.0);
+    for (const auto& e : canon)
+    {
+        degree[e.u] += e.w;
+        degree[e.v] += e.w;
+    }
+
+    /* build CSR representation */
+    std::vector<int>    row_ptr, col_idx;
+    std::vector<double> adj_w;
+    buildCSR(canon, row_ptr, col_idx, adj_w);
+
+    this->built_     = true;
+    this->edges_     = std::move(canon);
+    this->row_ptr_   = std::move(row_ptr);
+    this->col_idx_   = std::move(col_idx);
+    this->adj_w_     = std::move(adj_w);
+    this->degree_    = std::move(degree);
+
+    bool conn = check_connectivity();
+    this->connected_ = conn;
+}
+
+
+void Graph::build_from_vertices ()
+{
+    if (built_)         
+        throw std::runtime_error("build_from_vertices: already built");
+    if (vertices_.empty()) throw std::runtime_error("build_from_vertices: no vertices appended");
+
+    if (n_ <= 0)
+    {
+        throw std::invalid_argument("Graph::build_from_vertices: n must be positive. Set n before building.");
+    }
+
+    std::vector<InputEdge> in;
+    for (const auto& vertex : vertices_)
+    {
+        for (const auto& [v, w] : vertex.neighbors)
+        {
+            in.push_back({vertex.u, v, w});
+        }
+    }
+
+    std::vector<Edge> canon;
+    canonicaliseAndMerge(in, canon);
+    if (canon.empty())
+    {
+        throw std::runtime_error("build_from_vertices: canonical edge list is empty.");
+    }
+
     std::vector<double> degree(n_, 0.0);
     for (const auto& e : canon)
     {

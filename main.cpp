@@ -25,7 +25,7 @@ int main ()
     // std::cout << graph.buildLaplacianPinned(0, &maps) << '\n';
 
     GraphGenerator generator;
-    Graph graph = generator.random_d_regular(100, 3, true);
+    Graph graph = generator.grid(10);
 
     printVector(graph.row_ptr(), true);
     printVector(graph.col_idx(), true);
