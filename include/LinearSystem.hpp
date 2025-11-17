@@ -2,21 +2,29 @@
 #define LINEAR_SYSTEM_HPP
 
 #include "Eigen/Eigen"
+#include <random>
+#include <iostream>
 
 using SparseMatrix = Eigen::SparseMatrix<double, Eigen::RowMajor>;
+using Vector       = Eigen::VectorXd;
 class LinearSystem
 {
     public:
-        LinearSystem () = default;
+        LinearSystem (SparseMatrix A, Vector b) {};
 
-        void build_from_graph             ();
         void solve                        (); /* solver directly using Eigen's Sparse LU*/
         void estimate_extreme_eigenvalues (int max_iters = 1000, unsigned seed);
 
         template <class Solver>
         void solve_with_solver (Solver& solver)
         {
-            u_ = solver.solve(*this);
+            solver.solve(*this);
+        }
+
+        template <class Solver, class Preconditioner>
+        void solve_with_solver (Solver& solver, Preconditioner& preconditioner)
+        {
+            solver.solve(*this, preconditioner);
         }
 
         void print_info ();
