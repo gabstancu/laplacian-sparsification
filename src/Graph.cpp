@@ -36,7 +36,7 @@ void Graph::build_from_edges ()
     std::vector<InputEdge> in;
     in.reserve(edges_.size());
     for (const auto& e : edges_)
-    {
+    {   
         in.push_back({e.u, e.v, e.w});
     }
     
@@ -171,6 +171,12 @@ void Graph::buildCSR (std::vector<Edge>& edges,
         col_idx[pos_v] = e.u;
         adj_w[pos_v]   = e.w;
         cursor[e.v]++;
+
+        vertices_.push_back({e.u, 0.0, {}});
+        vertices_.push_back({e.v, 0.0, {}});
+
+        vertices_[e.u].neighbors[e.v] = e.w;
+        vertices_[e.v].neighbors[e.u] = e.w;
     }
 
 

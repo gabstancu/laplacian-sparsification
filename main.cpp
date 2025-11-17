@@ -25,7 +25,38 @@ int main ()
     // std::cout << graph.buildLaplacianPinned(0, &maps) << '\n';
 
     GraphGenerator generator;
-    Graph graph = generator.grid(10);
+    Graph graph = generator.grid(3);
+    graph.build_adjacency();
+    // SparseMatrix L = graph.buildLaplacianUnpinned();
+
+    // for (int i = 0; i < 4; i++)
+    // {
+    //     for (int j = 0; j < 4; j++)
+    //     {
+    //         std::cout << "i: " << i << ", j: " << j << '\n';
+    //         std::cout << "k: " << i * 4 + j << '\n';
+
+    //         if (j == 0) /* left */
+    //         {
+    //             std::cout << "left edge\n";
+    //         }
+    //         if (i == 0) /* top */
+    //         {
+    //             std::cout << "top edge\n";
+    //         }
+            
+    //         if (j == 3) /* right */
+    //         {
+    //             std::cout << "right edge\n";
+    //         }
+
+    //         if (i == 3) /* bottom */
+    //         {
+    //             std::cout << "bottom edge\n";
+    //         }
+            
+    //     }
+    // }
 
     printVector(graph.row_ptr(), true);
     printVector(graph.col_idx(), true);
