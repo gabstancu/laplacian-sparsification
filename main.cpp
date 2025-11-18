@@ -3,6 +3,7 @@
 #include "graph/Graph.hpp"
 #include "graph/GraphGenerator.hpp"
 #include "utils/display.hpp"
+#include "pde/DirichletFD.hpp"
 
 int main ()
 {
@@ -29,39 +30,10 @@ int main ()
     graph.build_adjacency();
     // SparseMatrix L = graph.buildLaplacianUnpinned();
 
-    // for (int i = 0; i < 4; i++)
-    // {
-    //     for (int j = 0; j < 4; j++)
-    //     {
-    //         std::cout << "i: " << i << ", j: " << j << '\n';
-    //         std::cout << "k: " << i * 4 + j << '\n';
-
-    //         if (j == 0) /* left */
-    //         {
-    //             std::cout << "left edge\n";
-    //         }
-    //         if (i == 0) /* top */
-    //         {
-    //             std::cout << "top edge\n";
-    //         }
-            
-    //         if (j == 3) /* right */
-    //         {
-    //             std::cout << "right edge\n";
-    //         }
-
-    //         if (i == 3) /* bottom */
-    //         {
-    //             std::cout << "bottom edge\n";
-    //         }
-            
-    //     }
-    // }
-
     printVector(graph.row_ptr(), true);
     printVector(graph.col_idx(), true);
-    printVector(graph.adj_w(), true);
-    printVector(graph.degree(), true);
+    printVector(graph.adj_w(),   true);
+    printVector(graph.degree(),  true);
 
 
     return 0;

@@ -22,14 +22,14 @@ include_directories(
     $ENV{HOMEBREW_INCLUDE_PATH}
     $ENV{HOMEBREW_OPT_PATH}/eigen/include/eigen3
     $ENV{HOMEBREW_OPT_PATH}/boost/include
-    # $ENV{HOMEBREW_OPT_PATH}/ginac/include/ginac
+    $ENV{HOMEBREW_OPT_PATH}/ginac/include/ginac
     # $ENV{EXTERNAL_LIBS_PATH}/gnuplot/include # optional (currently not using)
 )
 
 message("current working directory ${CMAKE_CURRENT_SOURCE_DIR}")
 
 link_directories(
-    # $ENV{HOMEBREW_OPT_PATH}/ginac/lib 
+    $ENV{HOMEBREW_OPT_PATH}/ginac/lib 
     $ENV{HOMEBREW_OPT_PATH}/boost/lib
 )
 

@@ -10,10 +10,11 @@ using Vector       = Eigen::VectorXd;
 class LinearSystem
 {
     public:
-        LinearSystem (SparseMatrix A, Vector b) {};
+        LinearSystem (SparseMatrix A, Vector b);
+        LinearSystem () = default;
 
         void solve                        (); /* solver directly using Eigen's Sparse LU*/
-        void estimate_extreme_eigenvalues (int max_iters = 1000, unsigned seed);
+        void estimate_extreme_eigenvalues (int max_iters = 1000, unsigned seed = 0);
 
         template <class Solver>
         void solve_with_solver (Solver& solver)

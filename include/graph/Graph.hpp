@@ -64,8 +64,9 @@ class Graph
         std::vector<double>& adj_w   () { return this->adj_w_; }
         std::vector<double>& degree  () { return this->degree_; }
 
-        void set_n (int n) { this->n_ = n; }
-        void set_m (int m) { this->m_ = m; }
+        void set_n    (int n)                   { this->n_ = n; }
+        void set_m    (int m)                   { this->m_ = m; }
+        void set_type (const std::string& type) { this->type_ = type; }
 
     private:
         int n_ = 0; // nodes
