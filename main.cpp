@@ -3,7 +3,7 @@
 #include "graph/Graph.hpp"
 #include "graph/GraphGenerator.hpp"
 #include "utils/display.hpp"
-#include "pde/DirichletFD.hpp"
+// #include "pde/DirichletFD.hpp"
 
 int main ()
 {
@@ -26,14 +26,14 @@ int main ()
     // std::cout << graph.buildLaplacianPinned(0, &maps) << '\n';
 
     GraphGenerator generator;
-    Graph graph = generator.grid(3);
-    graph.build_adjacency();
-    // SparseMatrix L = graph.buildLaplacianUnpinned();
+    Graph graph = generator.grid(5);
+    // std::cout << graph.build_adjacency().size() << '\n';
+    // std::cout << graph.buildLaplacianUnpinned().size() << '\n';
 
-    printVector(graph.row_ptr(), true);
-    printVector(graph.col_idx(), true);
-    printVector(graph.adj_w(),   true);
-    printVector(graph.degree(),  true);
+    // printVector(graph.row_ptr(), true);
+    // printVector(graph.col_idx(), true);
+    // printVector(graph.adj_w(),   true);
+    // printVector(graph.degree(),  true);
 
 
     return 0;

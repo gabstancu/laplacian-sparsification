@@ -159,6 +159,8 @@ void Graph::buildCSR (std::vector<Edge>& edges,
     adj_w.resize(row_ptr.back());
 
     std::vector<int> cursor = row_ptr;
+    vertices_.resize(n_);
+    std::vector<int> filled(n_, 0);
 
     for (const auto& e : edges)
     {
@@ -172,13 +174,24 @@ void Graph::buildCSR (std::vector<Edge>& edges,
         adj_w[pos_v]   = e.w;
         cursor[e.v]++;
 
-        vertices_.push_back({e.u, 0.0, {}});
-        vertices_.push_back({e.v, 0.0, {}});
+        if (filled[e.u])
+        {
+            vertices_[e.u].neighbors[e.v] = e.w;
+        }
+        else
+        {
+            vertices_[e.u] = {e.u, 0.0, {}}; filled[e.u] = 1;
+        }
 
-        vertices_[e.u].neighbors[e.v] = e.w;
-        vertices_[e.v].neighbors[e.u] = e.w;
+        if (filled[e.v])
+        {
+            vertices_[e.v].neighbors[e.u] = e.w;
+        }
+        else
+        {
+            vertices_[e.v] = {e.v, 0.0, {}}; filled[e.v] = 1;
+        }
     }
-
 
     assert(static_cast<size_t>(row_ptr.back()) == 2 * edges.size());
 

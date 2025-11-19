@@ -98,7 +98,7 @@ namespace pde
                                 std::function<double(double,double)>& f, 
                                 DirichletBC&   g)
     {
-
+        
     }
 
     Vector lift_dirichlet_solution (FDIndex&       idx, 
