@@ -4,7 +4,15 @@ namespace pde
 {   
     using Triplet = Eigen::Triplet<double>;
 
+    static inline bool is_boundary (int i, int j, int N)
+    {
 
+    }
+
+    static inline double boundary_node_value ()
+    {
+        
+    }
 
     DirichletMaps build_dirichlet_maps (FDIndex& index)
     {
@@ -48,14 +56,17 @@ namespace pde
 
         // Count interior nodes and roughly estimate nnz
         int nI = 0;
-        for (int k = 0; k < n; ++k) if (maps.pin[k] >= 0) ++nI;
-        SparseMatrix A(nI, nI);
+        for (int k = 0; k < n; ++k) 
+            if (maps.pin[k] >= 0) ++nI;
+
+        SparseMatrix         A(nI, nI);
         std::vector<Triplet> T;
 
         // 1 diagonal per interior + up to 4 off-diagonals on a grid
         T.reserve(nI * 5);
 
-        for (int u = 0; u < n; ++u) {
+        for (int u = 0; u < n; ++u) 
+        {
             const int ui = maps.pin[u];
             if (ui < 0) 
                 continue; // boundary row skipped
@@ -64,7 +75,8 @@ namespace pde
             T.emplace_back(ui, ui, degree[u]);
 
             // Off-diagonals: only interior neighbors contribute -w
-            for (int k = row_ptr[u]; k < row_ptr[u + 1]; ++k) {
+            for (int k = row_ptr[u]; k < row_ptr[u + 1]; ++k) 
+            {
                 const int v  = col_idx[k];
                 const int vi = maps.pin[v];
                 if (vi >= 0) 
@@ -76,7 +88,25 @@ namespace pde
 
         A.setFromTriplets(T.begin(), T.end());
         A.makeCompressed();
+        
         return A;
+    }
+
+    Vector build_dirichlet_rhs (Graph&         graph, 
+                                FDIndex&       idx, 
+                                DirichletMaps& maps,
+                                std::function<double(double,double)>& f, 
+                                DirichletBC&   g)
+    {
+
+    }
+
+    Vector lift_dirichlet_solution (FDIndex&       idx, 
+                                    DirichletMaps& maps, 
+                                    Vector&        u_I, 
+                                    DirichletBC&   g)
+    {
+
     }
 
 } // namespace pde

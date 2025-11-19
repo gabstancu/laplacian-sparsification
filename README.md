@@ -12,6 +12,8 @@ Lx = b, \quad \tilde L x = b.
 L = D - W
 ```
 
-```math
+Assembling the right hand-side (RHS):
 
+```math
+b = - h ^2 f(x, y) + \sum_{ \substack{j \in B \\ j \sim i} } w_{ij} g_j
 ```

@@ -6,9 +6,10 @@
 namespace pde 
 {   
     using Vector = Eigen::VectorXd;
-    
-    struct FDIndex {
-               int N;             // grid is N x N, spacing h = 1/(N-1)
+
+    struct FDIndex 
+    {
+        int N;             // grid is N x N, spacing h = 1/(N-1)
         inline int                id(int i, int j) { return i * N + j; }
         inline std::pair<int,int> rc(int k)        { return { k / N, k % N }; }
         inline double             h()              { return (N > 1) ? 1.0 / (N - 1) : 1.0; }
