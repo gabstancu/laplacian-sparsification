@@ -6,9 +6,96 @@
 #include <vector>
 #include <stdexcept>
 
-using RowMat = Eigen::SparseMatrix<double, Eigen::RowMajor>;
-using ColMat = Eigen::SparseMatrix<double>;
-using Vector = Eigen::VectorXd;
+using SparseMatrix = Eigen::SparseMatrix<double, Eigen::RowMajor>;
+using RowMat  = Eigen::SparseMatrix<double, Eigen::RowMajor>;
+using ColMat  = Eigen::SparseMatrix<double>;
+using Vector  = Eigen::VectorXd;
+using Scalar  = typename Vector::Scalar;
+using DiagMat = Eigen::DiagonalMatrix<Scalar, Eigen::Dynamic>;
+
+
+struct Diagonal 
+{
+    Vector inv_diag; 
+
+    Diagonal() = default;
+
+    void compute(const SparseMatrix& A) 
+    {
+        inv_diag = A.diagonal();
+        
+        for (int i = 0; i < inv_diag.size(); ++i) 
+        {
+            double d = inv_diag[i];
+            inv_diag[i] = (d > 0.0) ? 1.0 / d : 0.0; 
+        }
+    }
+
+    void apply(const Vector& r, Vector& z) const 
+    {
+        z = inv_diag.cwiseProduct(r);
+    }
+};
+
+
+struct SSOR 
+{
+    double       omega = 1.0;        // 0 < omega < 2
+    SparseMatrix DL;                 // D + ω * strictLower(A)
+    Eigen::DiagonalMatrix<double, Eigen::Dynamic> D;
+
+    SSOR() = default;
+    explicit SSOR(double w): omega(w) {}
+
+    void compute(const SparseMatrix& A) 
+    {
+        if (omega <= 0.0 || omega >= 2.0)
+            throw std::invalid_argument("SSOR: omega must be in (0,2)");
+        if (A.rows() != A.cols())
+            throw std::invalid_argument("SSOR: A must be square");
+
+        const int n = A.rows();
+        
+        const Vector diag = A.diagonal();
+        if ((diag.array() <= 0.0).any())
+            throw std::runtime_error("SSOR: nonpositive diagonal");
+
+        D = diag.asDiagonal();
+
+        // Build DL = D + ω * strictLower(A)
+        std::vector<Eigen::Triplet<double>> T;
+        T.reserve(A.nonZeros());
+        for (int k = 0; k < A.outerSize(); ++k) 
+        {
+            for (typename SparseMatrix::InnerIterator it(A, k); it; ++it) 
+            {
+                int i = it.row(), j = it.col();
+                if (i == j) 
+                {
+                    T.emplace_back(i, j, diag[i]);
+                } 
+                else if (i > j) 
+                {
+                    T.emplace_back(i, j, omega * it.value());
+                }
+            }
+        }
+        DL.resize(n, n);
+        DL.setFromTriplets(T.begin(), T.end());
+        DL.makeCompressed();
+    }
+
+    void apply(const Vector& r, Vector& z) const {
+        // Forward: (D + ωL) y = r
+        Vector y = DL.template triangularView<Eigen::Lower>().solve(r);
+        // Middle: D * y
+        Vector w = D * y;
+        // Backward: (D + ωU)^T z = w   (since DU = DL^T)
+        z = DL.transpose().template triangularView<Eigen::Upper>().solve(w);
+        // Scale by ω(2−ω)
+        z *= omega * (2.0 - omega);
+    }
+};
 
 
 struct IC0
