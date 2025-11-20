@@ -43,3 +43,5 @@ venv/
 *.dat
 build/
 README.md
+*.ipynb
+*.py
