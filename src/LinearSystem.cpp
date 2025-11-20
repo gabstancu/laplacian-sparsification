@@ -10,6 +10,8 @@ LinearSystem::LinearSystem (SparseMatrix A, Vector b) : A_(std::move(A)), b_(std
     u_.setZero(b_.size());
     n_ = static_cast<int>(A_.cols());
     m_ = static_cast<int>(A_.rows());
+
+    estimate_extreme_eigenvalues();
 }
 
 
@@ -92,6 +94,7 @@ void LinearSystem::estimate_extreme_eigenvalues (int max_iters, unsigned seed)
     lambda_max = eigs.eigenvalues()(m-1);
     kappa_hat  = this->lambda_max / this->lambda_min; 
 }
+
 
 void LinearSystem::print_info ()
 {

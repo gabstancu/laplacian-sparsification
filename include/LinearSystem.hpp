@@ -4,6 +4,8 @@
 #include "Eigen/Eigen"
 #include <random>
 #include <iostream>
+#include <chrono>
+#include <cmath>
 
 using SparseMatrix = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 using Vector       = Eigen::VectorXd;
@@ -18,19 +20,24 @@ class LinearSystem
 
         template <class Solver>
         void solve_with_solver (Solver& solver)
-        {
+        {   
+            auto start = std::chrono::high_resolution_clock::now();
             solver.solve(*this);
+            auto end = std::chrono::high_resolution_clock::now();
+            this->time_elapsed = end - start;
         }
 
         template <class Solver, class Preconditioner>
         void solve_with_solver (Solver& solver, Preconditioner& preconditioner)
-        {
+        {   
+            auto start = std::chrono::high_resolution_clock::now();
             solver.solve(*this, preconditioner);
+            auto end = std::chrono::high_resolution_clock::now();
+            this->time_elapsed = end - start;
         }
 
         void print_info ();
 
-        /* get */
         SparseMatrix& A     () { return this->A_; }
         Vector&       b     () { return this->b_; }
         Vector&       u     () { return this->u_; }
@@ -51,6 +58,8 @@ class LinearSystem
         SparseMatrix A_; // system matrix
         Vector       b_; // rhs vector
         Vector       u_; // solution vector
+
+        std::chrono::duration<double> time_elapsed;
 
 };
 
