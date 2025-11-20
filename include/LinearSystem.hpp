@@ -30,6 +30,16 @@ class LinearSystem
 
         void print_info ();
 
+        /* get */
+        SparseMatrix& A     () { return this->A_; }
+        Vector&       b     () { return this->b_; }
+        Vector&       u     () { return this->u_; }
+        double        l_min () { return this-> lambda_min; }
+        double        l_max () { return this-> lambda_max; }
+        double        kappa () { return this-> kappa_hat; }
+        int           n     () { return this->n_; }
+        int           m     () { return this->m_; }
+
     private:
         int n_ = 0; // number of variables
         int m_ = 0; // number of equations
@@ -38,9 +48,9 @@ class LinearSystem
         double lambda_max = 0.0;
         double kappa_hat  = 0.0;
 
-        SparseMatrix    A_; // system matrix
-        Eigen::VectorXd b_; // rhs vector
-        Eigen::VectorXd u_; // solution vector
+        SparseMatrix A_; // system matrix
+        Vector       b_; // rhs vector
+        Vector       u_; // solution vector
 
 };
 
