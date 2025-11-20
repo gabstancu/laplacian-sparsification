@@ -33,6 +33,7 @@ namespace pde
 
     DirichletMaps build_dirichlet_maps (FDIndex& index);
 
+    
     SparseMatrix build_dirichlet_laplacian (Graph&         graph, 
                                             DirichletMaps& maps); // build L_{II}
     

@@ -3,7 +3,8 @@
 #include "graph/Graph.hpp"
 #include "graph/GraphGenerator.hpp"
 #include "utils/display.hpp"
-// #include "pde/DirichletFD.hpp"
+#include "pde/DirichletFD.hpp"
+
 
 int main ()
 {
@@ -34,6 +35,8 @@ int main ()
     // printVector(graph.col_idx(), true);
     // printVector(graph.adj_w(),   true);
     // printVector(graph.degree(),  true);
+
+    pde::FDIndex idx;
 
 
     return 0;
