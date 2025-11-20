@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Eigen/Eigen"
+#include "ginac.h"
 #include "graph/Graph.hpp"
 #include "graph/GraphGenerator.hpp"
 #include "utils/display.hpp"

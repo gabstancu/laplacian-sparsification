@@ -37,5 +37,5 @@ link_directories(
 file(GLOB_RECURSE SRC_FILES "${SRC_DIR}/*.cpp")
 
 add_executable(run ${SRC_FILES} ${CMAKE_SOURCE_DIR}/main.cpp)
-target_link_libraries(run PRIVATE Boost::iostreams)
+target_link_libraries(run PRIVATE ginac Boost::iostreams)
 

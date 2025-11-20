@@ -48,8 +48,8 @@ class LinearSystem
         int           n     () { return this->n_; }
         int           m     () { return this->m_; }
 
-        void calc_omega_();
-        
+        void calc_omega_ ();
+
     private:
         int n_ = 0; // number of variables
         int m_ = 0; // number of equations
