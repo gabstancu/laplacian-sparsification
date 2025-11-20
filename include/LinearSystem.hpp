@@ -44,9 +44,12 @@ class LinearSystem
         double        l_min () { return this-> lambda_min; }
         double        l_max () { return this-> lambda_max; }
         double        kappa () { return this-> kappa_hat; }
+        double        omega () { return this->omega_; }
         int           n     () { return this->n_; }
         int           m     () { return this->m_; }
 
+        void calc_omega_();
+        
     private:
         int n_ = 0; // number of variables
         int m_ = 0; // number of equations
@@ -54,6 +57,7 @@ class LinearSystem
         double lambda_min = 0.0;
         double lambda_max = 0.0;
         double kappa_hat  = 0.0;
+        double omega_     = 0.0; 
 
         SparseMatrix A_; // system matrix
         Vector       b_; // rhs vector

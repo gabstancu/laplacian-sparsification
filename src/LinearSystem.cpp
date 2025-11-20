@@ -96,6 +96,13 @@ void LinearSystem::estimate_extreme_eigenvalues (int max_iters, unsigned seed)
 }
 
 
+void LinearSystem::calc_omega_()
+{
+    this->omega_ = 2.0 / (1 + std::sin((M_PI) / this->n_ ));
+    this->omega_ = std::min(this->omega_, 1.9 + (0.05) / this->n_);
+}
+
+
 void LinearSystem::print_info ()
 {
     std::cout << "Linear System Info:\n";
