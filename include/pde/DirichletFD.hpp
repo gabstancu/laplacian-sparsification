@@ -8,7 +8,7 @@ namespace pde
 {   
     struct FDIndex 
     {
-        int N;             // grid is N x N, spacing h = 1/(N-1)
+        int N = 0;             // grid is N x N, spacing h = 1/(N-1)
         inline int                id(int i, int j) const { return i * N + j; }
         inline std::pair<int,int> rc(int k)        const { return { k / N, k % N }; }
         inline double             h()              const { return (N > 1) ? 1.0 / (N - 1) : 1.0; }
@@ -33,11 +33,11 @@ namespace pde
     DirichletMaps build_dirichlet_maps (const FDIndex& index);
 
     
-    SparseMatrix build_dirichlet_laplacian (const Graph&         graph, 
+    SparseMatrix build_dirichlet_laplacian (Graph&         graph, 
                                             const DirichletMaps& maps); // build L_{II}
     
     // Assemble b_I = h^2 f(x,y) + Σ_{boundary nbr j} w_ij * g_j
-    Vector build_dirichlet_rhs (const Graph&         graph, 
+    Vector build_dirichlet_rhs (Graph&         graph, 
                                 const FDIndex&       idx, 
                                 const DirichletMaps& maps,
                                 const std::function<double(double,double)>& f, 

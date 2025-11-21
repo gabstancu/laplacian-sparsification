@@ -6,7 +6,8 @@
 #include "utils/display.hpp"
 #include "pde/DirichletFD.hpp"
 #include "LinearSystem.hpp"
-
+#include "solve/CG.hpp"
+#include <functional>
 
 int main ()
 {
@@ -31,9 +32,10 @@ int main ()
     GraphGenerator generator;
     Graph graph = generator.grid(5);
 
-    pde::FDIndex       idx;
+    pde::FDIndex       idx{5};
     pde::DirichletMaps maps      = pde::build_dirichlet_maps(idx);
     SparseMatrix       laplacian = pde::build_dirichlet_laplacian(graph, maps);
+
 
     pde::DirichletBC BC;
     BC.left   = [](double y) { return 0.0; };
@@ -41,14 +43,16 @@ int main ()
     BC.bottom = [](double x) { return std::sin(M_PI * x); };
     BC.top    = [](double x) { return 4.0 * std::sin(3.0 * M_PI * x); };
 
-    std::function<double(double,double)> f = [](double, double) { return 0.0; };
+    std::function<double(double, double)> f = [](double x, double y)
+    {
+        return 0.0;
+    };
 
-    // SparseMatrix A =  graph.buildLaplacianUnpinned();
-    // Vector b = pde::build_dirichlet_rhs(graph, idx, maps, f, BC); 
+    Vector b = pde::build_dirichlet_rhs(graph, idx, maps, f, BC); 
 
-    // LinearSystem system(A, b);
-
-    // std::cout << graph.build_adjacency().size() << '\n';
+    LinearSystem system(laplacian, b);
+    ConjugateGradient CG;
+    system.solve_with_solver(CG);
 
     // printVector(graph.row_ptr(), true);
     // printVector(graph.col_idx(), true);

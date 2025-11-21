@@ -12,6 +12,7 @@ LinearSystem::LinearSystem (SparseMatrix A, Vector b) : A_(std::move(A)), b_(std
     m_ = static_cast<int>(A_.rows());
 
     estimate_extreme_eigenvalues();
+    calc_omega_();
 }
 
 

@@ -61,7 +61,7 @@ namespace pde
 
 
     SparseMatrix build_dirichlet_laplacian (Graph&         graph, 
-                                            DirichletMaps& maps)
+                                            const DirichletMaps& maps)
     {
         const int n = static_cast<int>(maps.pin.size());
 
@@ -111,10 +111,10 @@ namespace pde
 
 
     Vector build_dirichlet_rhs (Graph&         graph, 
-                                FDIndex&       idx, 
-                                DirichletMaps& maps,
-                                std::function<double(double,double)>& f, 
-                                DirichletBC&   g)
+                                const FDIndex&       idx, 
+                                const DirichletMaps& maps,
+                                const std::function<double(double,double)>& f, 
+                                const DirichletBC&   g)
     {
         int    N = idx.N;
         int    n = static_cast<int>(maps.pin.size());
@@ -160,10 +160,10 @@ namespace pde
     }
 
 
-    Vector lift_dirichlet_solution (FDIndex&       idx, 
-                                    DirichletMaps& maps, 
-                                    Vector&        u_I, 
-                                    DirichletBC&   g)
+    Vector lift_dirichlet_solution (const FDIndex&       idx, 
+                                    const DirichletMaps& maps, 
+                                    const Vector&        u_I, 
+                                    const DirichletBC&   g)
     {   
         int N = idx.N;
         int n = N * N;
