@@ -11,13 +11,13 @@ namespace pde
     }
 
 
-    static inline double boundary_node_value (int k, FDIndex& idx, DirichletBC& g)
+    static inline double boundary_node_value (int k, const FDIndex& idx, const DirichletBC& g)
     {
-        int    N      = idx.N;
-        auto   [i, j] = idx.rc(k);
-        double h      = idx.h(); 
-        double x      = j * h;
-        double y      = 1.0 - i * h;
+        const int    N      = idx.N;
+        const auto   [i, j] = idx.rc(k);
+        const double h      = idx.h(); 
+        const double x      = j * h;
+        const double y      = 1.0 - i * h;
 
         if (i == 0)
             return g.top ? g.top(x) : 0.0;
@@ -30,28 +30,29 @@ namespace pde
     }
 
 
-    DirichletMaps build_dirichlet_maps (FDIndex& index)
+    DirichletMaps build_dirichlet_maps (const FDIndex& index)
     {
         DirichletMaps maps;
-        int N = index.N;
-        int N2 = N * N;
+        const int N = index.N;
+        const int N2 = N * N;
 
-        maps.is_boundary.resize(N2, 0);
-        for (int i = 0; i < N; ++i)
+        maps.is_boundary.assign(N2, 0);
+        maps.pin.assign(N2, -1);
+        maps.unpin.reserve((N > 2) ? (N-2) * (N-2) : 0);
+
+        int cursor = 0;
+        for (int k = 0; k < N2; k++)
         {
-            for (int j = 0; j < N; ++j)
+            const auto [i, j] = index.rc(k);
+
+            bool boundary = (i == 0) || (i == N - 1) || (j == 0) || (j == N - 1);
+
+            maps.is_boundary[k] = static_cast<int>(boundary);
+
+            if (!boundary)
             {
-                int k = index.id(i, j);
-                if (i == 0 || i == N - 1 || j == 0 || j == N - 1)
-                {
-                    maps.is_boundary[k] = 1;
-                    maps.pin.push_back(k);
-                }
-                else
-                {
-                    maps.is_boundary[k] = 0;
-                    maps.unpin.push_back(k);
-                }
+                maps.pin[k] = cursor++;
+                maps.unpin.push_back(k);
             }
         }
 
@@ -72,7 +73,8 @@ namespace pde
         // Count interior nodes and roughly estimate nnz
         int nI = 0;
         for (int k = 0; k < n; ++k) 
-            if (maps.pin[k] >= 0) ++nI;
+            if (maps.pin[k] >= 0) 
+                ++nI;
 
         SparseMatrix         A(nI, nI);
         std::vector<Triplet> T;

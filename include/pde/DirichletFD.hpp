@@ -3,16 +3,15 @@
 
 #include "graph/Graph.hpp"
 
+using Vector = Eigen::VectorXd;
 namespace pde 
 {   
-    using Vector = Eigen::VectorXd;
-
     struct FDIndex 
     {
         int N;             // grid is N x N, spacing h = 1/(N-1)
-        inline int                id(int i, int j) { return i * N + j; }
-        inline std::pair<int,int> rc(int k)        { return { k / N, k % N }; }
-        inline double             h()              { return (N > 1) ? 1.0 / (N - 1) : 1.0; }
+        inline int                id(int i, int j) const { return i * N + j; }
+        inline std::pair<int,int> rc(int k)        const { return { k / N, k % N }; }
+        inline double             h()              const { return (N > 1) ? 1.0 / (N - 1) : 1.0; }
     };
 
     struct DirichletBC
@@ -27,28 +26,28 @@ namespace pde
     {
         std::vector<int>  pin;
         std::vector<int>  unpin;
-        std::vector<char> is_boundary;
+        std::vector<int>  is_boundary;
     };
 
 
-    DirichletMaps build_dirichlet_maps (FDIndex& index);
+    DirichletMaps build_dirichlet_maps (const FDIndex& index);
 
     
-    SparseMatrix build_dirichlet_laplacian (Graph&         graph, 
-                                            DirichletMaps& maps); // build L_{II}
+    SparseMatrix build_dirichlet_laplacian (const Graph&         graph, 
+                                            const DirichletMaps& maps); // build L_{II}
     
     // Assemble b_I = h^2 f(x,y) + Σ_{boundary nbr j} w_ij * g_j
-    Vector build_dirichlet_rhs (Graph&         graph, 
-                                FDIndex&       idx, 
-                                DirichletMaps& maps,
-                                std::function<double(double,double)>& f, 
-                                DirichletBC&   g);
+    Vector build_dirichlet_rhs (const Graph&         graph, 
+                                const FDIndex&       idx, 
+                                const DirichletMaps& maps,
+                                const std::function<double(double,double)>& f, 
+                                const DirichletBC&   g);
 
     // Lift interior solution back to full N^2 vector u, filling boundary by g
-    Vector lift_dirichlet_solution (FDIndex&       idx, 
-                                    DirichletMaps& maps, 
-                                    Vector&        u_I, 
-                                    DirichletBC&   g); // lift u_{I} to u
+    Vector lift_dirichlet_solution (const FDIndex&       idx, 
+                                    const DirichletMaps& maps, 
+                                    const Vector&        u_I, 
+                                    const DirichletBC&   g); // lift u_{I} to u
 }
 
 

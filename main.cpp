@@ -5,6 +5,7 @@
 #include "graph/GraphGenerator.hpp"
 #include "utils/display.hpp"
 #include "pde/DirichletFD.hpp"
+#include "LinearSystem.hpp"
 
 
 int main ()
@@ -29,15 +30,30 @@ int main ()
 
     GraphGenerator generator;
     Graph graph = generator.grid(5);
+
+    pde::FDIndex       idx;
+    pde::DirichletMaps maps      = pde::build_dirichlet_maps(idx);
+    SparseMatrix       laplacian = pde::build_dirichlet_laplacian(graph, maps);
+
+    pde::DirichletBC BC;
+    BC.left   = [](double y) { return 0.0; };
+    BC.right  = [](double y) { return 0.0; };
+    BC.bottom = [](double x) { return std::sin(M_PI * x); };
+    BC.top    = [](double x) { return 4.0 * std::sin(3.0 * M_PI * x); };
+
+    std::function<double(double,double)> f = [](double, double) { return 0.0; };
+
+    // SparseMatrix A =  graph.buildLaplacianUnpinned();
+    // Vector b = pde::build_dirichlet_rhs(graph, idx, maps, f, BC); 
+
+    // LinearSystem system(A, b);
+
     // std::cout << graph.build_adjacency().size() << '\n';
-    // std::cout << graph.buildLaplacianUnpinned().size() << '\n';
 
     // printVector(graph.row_ptr(), true);
     // printVector(graph.col_idx(), true);
     // printVector(graph.adj_w(),   true);
     // printVector(graph.degree(),  true);
-
-    pde::FDIndex idx;
 
 
     return 0;

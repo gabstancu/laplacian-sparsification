@@ -7,11 +7,11 @@
 #include <stdexcept>
 
 using SparseMatrix = Eigen::SparseMatrix<double, Eigen::RowMajor>;
-using RowMat  = Eigen::SparseMatrix<double, Eigen::RowMajor>;
-using ColMat  = Eigen::SparseMatrix<double>;
-using Vector  = Eigen::VectorXd;
-using Scalar  = typename Vector::Scalar;
-using DiagMat = Eigen::DiagonalMatrix<Scalar, Eigen::Dynamic>;
+using RowMat       = Eigen::SparseMatrix<double, Eigen::RowMajor>;
+using ColMat       = Eigen::SparseMatrix<double>;
+using Vector       = Eigen::VectorXd;
+using Scalar       = typename Vector::Scalar;
+using DiagMat      = Eigen::DiagonalMatrix<Scalar, Eigen::Dynamic>;
 
 
 struct Diagonal 
@@ -55,7 +55,7 @@ struct SSOR
             throw std::invalid_argument("SSOR: A must be square");
 
         const int n = A.rows();
-        
+
         const Vector diag = A.diagonal();
         if ((diag.array() <= 0.0).any())
             throw std::runtime_error("SSOR: nonpositive diagonal");
